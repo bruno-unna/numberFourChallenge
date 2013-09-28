@@ -1,4 +1,4 @@
-package com.example
+package com.numberfour
 
 import akka.actor.Actor
 import spray.routing._
@@ -7,7 +7,7 @@ import MediaTypes._
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
-class MyServiceActor extends Actor with MyService {
+class AgileServiceActor extends Actor with AgileService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -21,7 +21,7 @@ class MyServiceActor extends Actor with MyService {
 
 
 // this trait defines our service behavior independently from the service actor
-trait MyService extends HttpService {
+trait AgileService extends HttpService {
 
   val myRoute =
     path("") {
