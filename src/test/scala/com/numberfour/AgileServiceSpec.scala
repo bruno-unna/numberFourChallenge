@@ -7,7 +7,7 @@ import StatusCodes._
 
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
   def actorRefFactory = system
-  
+
   "AgileService" should {
 
     "return a greeting for GET requests to the root path" in {

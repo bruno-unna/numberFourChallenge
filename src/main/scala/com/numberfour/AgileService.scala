@@ -19,7 +19,6 @@ class AgileServiceActor extends Actor with AgileService {
   def receive = runRoute(myRoute)
 }
 
-
 // this trait defines our service behavior independently from the service actor
 trait AgileService extends HttpService {
 
