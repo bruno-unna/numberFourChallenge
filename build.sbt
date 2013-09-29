@@ -9,7 +9,8 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 resolvers ++= Seq(
   "nightlies spray repo" at "http://nightlies.spray.io/",
   "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "releases"  at "http://oss.sonatype.org/content/repositories/releases"
+  "releases"  at "http://oss.sonatype.org/content/repositories/releases",
+  "apache maven repo" at "http://repo.maven.apache.org/maven2"
 )
 
 libraryDependencies ++= Seq(
@@ -19,7 +20,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"   %%  "akka-actor"    % "2.2.1",
   "com.typesafe.akka"   %%  "akka-testkit"  % "2.2.1",
   "org.specs2"          %%  "specs2"        % "2.2.2" % "test",
-  "org.mongodb"         %%  "casbah"        % "2.6.3"
+  "org.mongodb"         %%  "casbah"        % "2.6.3",
+  "org.slf4j"           %   "slf4j-simple"  % "1.7.5",
+  "org.clapper"         %   "grizzled-slf4j_2.10" % "1.0.1"
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
