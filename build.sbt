@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "io.spray"            %   "spray-testkit" % "1.2-20130710",
   "com.typesafe.akka"   %%  "akka-actor"    % "2.2.1",
   "com.typesafe.akka"   %%  "akka-testkit"  % "2.2.1",
-  "org.specs2"          %%  "specs2"        % "2.2.2" % "test"
+  "org.specs2"          %%  "specs2"        % "2.2.2" % "test",
+  "org.mongodb"         %%  "casbah"        % "2.6.3"
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
