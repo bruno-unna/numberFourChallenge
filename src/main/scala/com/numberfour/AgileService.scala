@@ -39,17 +39,19 @@ trait AgileService extends HttpService {
           }
         }
       }
-    } ~ path("project") {
-      object ProjectJsonProtocol extends DefaultJsonProtocol {
-        implicit val projectFormat = jsonFormat1(Project)
-      }
+    } ~ (path("project") & parameters('name.as[String])) { name =>
+      post {
+        object ProjectJsonProtocol extends DefaultJsonProtocol {
+          implicit val projectFormat = jsonFormat1(Project)
+        }
 
-      import ProjectJsonProtocol._
+        import ProjectJsonProtocol._
 
-      val jsonProject = Project("First project").toJson
-      respondWithMediaType(`application/json`) {
-        complete {
-          jsonProject.compactPrint
+        val jsonProject = Project(name).toJson
+        respondWithMediaType(`application/json`) {
+          complete {
+            jsonProject.compactPrint
+          }
         }
       }
     }

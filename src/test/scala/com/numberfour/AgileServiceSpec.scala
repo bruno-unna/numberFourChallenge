@@ -30,11 +30,11 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
         entityAs[String] === "HTTP method not allowed, supported methods: GET"
       }
     }
-    
+
     "adding a project via POST should return the project" in {
-      Post("project", "first") ~> route ~> check {
+      Post("project").withEntity(HttpEntity("first")) ~> route ~> check {
         status === OK
-        entityAs[String] must contain("First")
+        entityAs[String] must contain("first")
       }
     }
   }
