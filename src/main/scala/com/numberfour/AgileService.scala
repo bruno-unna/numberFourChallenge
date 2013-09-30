@@ -13,6 +13,9 @@ import spray.routing.directives.CompletionMagnet.fromObject
 import com.numberfour.domain.Team
 import java.util.NoSuchElementException
 import spray.http.StatusCodes
+import spray.json._
+import spray.httpx.SprayJsonSupport._
+import spray.routing.directives.LoggingMagnet
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -33,7 +36,13 @@ class AgileServiceActor extends Actor with AgileService {
 trait AgileService extends HttpService {
 
   val route =
-    path("api" / "teams" / IntNumber) { id =>
+    path("") { // direct access to the app context is forbidden
+      respondWithStatus(StatusCodes.BadRequest) {
+        complete {
+          "Invalid request. Please check your URL."
+        }
+      }
+    } ~ path("api" / "teams" / IntNumber) { id =>
       get {
         respondWithMediaType(`application/json`) {
           object TeamJsonProtocol extends DefaultJsonProtocol {
@@ -58,16 +67,12 @@ trait AgileService extends HttpService {
       }
     } ~ path("api" / "teams") {
       post {
-        import spray.json._
-        import spray.httpx.SprayJsonSupport._
-
         object IncomingTeamJsonProtocol extends DefaultJsonProtocol {
           implicit val teamFormat = jsonFormat1(SubTeam)
         }
         import IncomingTeamJsonProtocol._
 
         entity(as[SubTeam]) { subteam =>
-
           object TeamJsonProtocol extends DefaultJsonProtocol {
             implicit val teamFormat = jsonFormat3(Team)
           }
@@ -76,12 +81,13 @@ trait AgileService extends HttpService {
           val team = Team(1, subteam.name, 0).create()
           val jsonTeam = team.toJson
           respondWithMediaType(`application/json`) {
-            complete {
-              jsonTeam.compactPrint
+            respondWithStatus(StatusCodes.Created) {
+              complete {
+                jsonTeam.compactPrint
+              }
             }
           }
         }
-
       }
     }
 }

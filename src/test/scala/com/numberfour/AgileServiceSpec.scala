@@ -6,15 +6,25 @@ import spray.http._
 import StatusCodes._
 import com.numberfour.domain.Team
 import spray.httpx.unmarshalling.Unmarshaller
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
+import org.slf4j.Logger
+import spray.httpx.marshalling.Marshaller
+import spray.http.MediaTypes._
 
+@RunWith(classOf[JUnitRunner])
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
   def actorRefFactory = system
 
+  implicit val teamMarshaller = Marshaller.of[Team](`application/json`) {
+    (team, ct, ctx) => ctx.marshalTo(HttpEntity(ct, """{ "name": """" + team.name + """" }"""))
+  }
+
   "AgileService" should {
 
-    "return a greeting for GET requests to the root path" in {
-      Get() ~> route ~> check {
-        entityAs[String] must contain("Say hello")
+    "reject direct GET requests to the root path" in {
+      Get() ~> sealRoute(route) ~> check {
+        status === BadRequest
       }
     }
 
@@ -24,17 +34,13 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
       }
     }
 
-    "return a MethodNotAllowed error for PUT requests to the root path" in {
-      Put() ~> sealRoute(route) ~> check {
-        status === MethodNotAllowed
-        entityAs[String] === "HTTP method not allowed, supported methods: GET"
-      }
-    }
+    // TODO prepare the tests fixture (db cleaning, github cleaning)
 
-    "adding a project via POST should return the project" in {
-      Post("project").withEntity(HttpEntity("first")) ~> route ~> check {
-        status === OK
-        entityAs[String] must contain("first")
+    "adding a team via POST should return the team with a 201 header" in {
+
+      Post("/api/teams", Team(0, "Team Foo", 0)) ~> addHeader("Content-Type", "application/json") ~> route ~> check {
+        status === Created
+        //        entityAs[String] must contain("first")
       }
     }
   }
