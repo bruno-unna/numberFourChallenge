@@ -1,12 +1,16 @@
 package com.numberfour
 
+import com.numberfour.domain.SubTeam
+import com.numberfour.domain.Team
+
 import akka.actor.Actor
-import spray.routing._
-import spray.http._
-import MediaTypes._
-import com.numberfour.domain.Project
-import spray.json._
-import DefaultJsonProtocol._
+import spray.http.MediaTypes._
+import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
+import spray.json.DefaultJsonProtocol
+import spray.json.pimpAny
+import spray.routing.Directive.pimpApply
+import spray.routing.HttpService
+import spray.routing.directives.CompletionMagnet.fromObject
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -27,7 +31,7 @@ class AgileServiceActor extends Actor with AgileService {
 trait AgileService extends HttpService {
 
   val route =
-    path("") {
+    path("api" / "teams" / IntNumber) { id =>
       get {
         respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
           complete {
@@ -39,20 +43,32 @@ trait AgileService extends HttpService {
           }
         }
       }
-    } ~ (path("project") & parameters('name.as[String])) { name =>
+    } ~ path("api" / "teams") {
       post {
-        object ProjectJsonProtocol extends DefaultJsonProtocol {
-          implicit val projectFormat = jsonFormat1(Project)
+        import spray.json._
+        import spray.httpx.SprayJsonSupport._
+
+        object IncomingTeamJsonProtocol extends DefaultJsonProtocol {
+          implicit val teamFormat = jsonFormat1(SubTeam)
         }
+        import IncomingTeamJsonProtocol._
 
-        import ProjectJsonProtocol._
+        entity(as[SubTeam]) { subteam =>
 
-        val jsonProject = Project(name).toJson
-        respondWithMediaType(`application/json`) {
-          complete {
-            jsonProject.compactPrint
+          object TeamJsonProtocol extends DefaultJsonProtocol {
+            implicit val teamFormat = jsonFormat3(Team)
+          }
+          import TeamJsonProtocol._
+
+          val team = Team(1, subteam.name, 0)
+          val jsonTeam = team.toJson
+          respondWithMediaType(`application/json`) {
+            complete {
+              jsonTeam.compactPrint
+            }
           }
         }
+
       }
     }
 }

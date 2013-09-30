@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 import spray.testkit.Specs2RouteTest
 import spray.http._
 import StatusCodes._
-import com.numberfour.domain.Project
+import com.numberfour.domain.Team
 import spray.httpx.unmarshalling.Unmarshaller
 
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
