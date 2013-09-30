@@ -60,7 +60,7 @@ trait AgileService extends HttpService {
           }
           import TeamJsonProtocol._
 
-          val team = Team(1, subteam.name, 0)
+          val team = Team(1, subteam.name, 0).create()
           val jsonTeam = team.toJson
           respondWithMediaType(`application/json`) {
             complete {
