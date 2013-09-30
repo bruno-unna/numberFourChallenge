@@ -25,7 +25,8 @@ libraryDependencies ++= Seq(
   "org.mongodb"         %%  "casbah"        % "2.6.3",
   "org.slf4j"           %   "slf4j-simple"  % "1.7.5",
   "org.clapper"         %   "grizzled-slf4j_2.10" % "1.0.1",
-  "org.eclipse.mylyn.github" % "org.eclipse.egit.github.core" % "2.1.5"
+  "org.eclipse.mylyn.github" % "org.eclipse.egit.github.core" % "2.1.5",
+  "junit"               %   "junit"         % "4.8.1"
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
