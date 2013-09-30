@@ -2,7 +2,6 @@ package com.numberfour
 
 import com.numberfour.domain.SubTeam
 import com.numberfour.domain.Team
-
 import akka.actor.Actor
 import spray.http.MediaTypes._
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
@@ -11,6 +10,9 @@ import spray.json.pimpAny
 import spray.routing.Directive.pimpApply
 import spray.routing.HttpService
 import spray.routing.directives.CompletionMagnet.fromObject
+import com.numberfour.domain.Team
+import java.util.NoSuchElementException
+import spray.http.StatusCodes
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -33,13 +35,24 @@ trait AgileService extends HttpService {
   val route =
     path("api" / "teams" / IntNumber) { id =>
       get {
-        respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
-          complete {
-            <html>
-              <body>
-                <h1>Say hello to <i>spray-routing</i> on <i>spray-can</i>!</h1>
-              </body>
-            </html>
+        respondWithMediaType(`application/json`) {
+          object TeamJsonProtocol extends DefaultJsonProtocol {
+            implicit val teamFormat = jsonFormat3(Team)
+          }
+          import TeamJsonProtocol._
+
+          val team_ = Team(0, "", 0).findById(id)
+
+          if (team_.isEmpty) {
+            respondWithStatus(StatusCodes.NotFound) {
+              complete { "TEAM NOT FOUND" }
+            }
+          } else {
+            val team = team_.get
+            val jsonTeam = team.toJson
+            complete {
+              jsonTeam.compactPrint
+            }
           }
         }
       }

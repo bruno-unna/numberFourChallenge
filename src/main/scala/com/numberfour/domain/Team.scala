@@ -6,22 +6,42 @@ import com.mongodb.casbah.commons.MongoDBObject
 
 case class SubTeam(name: String)
 
-case class Team(id: Long, name: String, members: Long) {
-  def create(): Team = {
+case class Team(id: Long, name: String, members: Int) {
+
+  // TODO optimize this ugly code
+  def getMongoCollection() = {
     val mongoClient = MongoClient("localhost", 27017)
     val db = mongoClient("numberfour")
-    val coll = db("team")
+    db("team")
+  }
+
+  def create(): Team = {
+    val coll = getMongoCollection
     val mongoTeam = MongoDBObject("name" -> this.name)
     val readTeam = coll.findOne(mongoTeam)
     if (readTeam.isEmpty) {
       val nextId = coll.count() + 1
-      mongoTeam.update("id", String.valueOf(nextId))
+      val update = $set("id" -> nextId, "name" -> this.name, "members" -> 0)
       coll.insert(mongoTeam)
+      coll.update(mongoTeam, update)
     }
     // TODO validate correct db write
     val retMongo = coll.findOne(mongoTeam).get // should be one
-    val idString: String = retMongo.get("id").toString()
-    Team(idString.toLong, retMongo.get("name").toString, 0)
+
+    Team(retMongo.get("id").asInstanceOf[Long], retMongo.get("name").toString, 0)
   }
 
+  def findById(id: Long): Option[Team] = {
+    val coll = getMongoCollection()
+    val mongoTeam = MongoDBObject("id" -> id)
+    val readTeam = coll.findOne(mongoTeam)
+    if (readTeam.isEmpty) None
+    else {
+      val retMongo = readTeam.get
+      val id = retMongo.get("id").asInstanceOf[Long]
+      val name = retMongo.get("name").toString()
+      val members = retMongo.get("members").asInstanceOf[Int]
+      Some(Team(id, name, members))
+    }
+  }
 }
