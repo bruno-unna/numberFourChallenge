@@ -5,6 +5,7 @@ import akka.actor.Props
 import akka.actor.actorRef2Scala
 import akka.io.IO
 import spray.can.Http
+import com.numberfour.application.AgileServiceActor
 
 object Boot extends App {
 

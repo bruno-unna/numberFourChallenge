@@ -11,12 +11,12 @@ case class SubTeam(name: String)
 
 case object TeamManager {
 
+  // persistence related stuff:
   def getMongoCollection() = {
     val mongoClient = MongoClient("localhost", 27017)
     val db = mongoClient("numberfour")
     db("team")
   }
-
   val coll = getMongoCollection
 
   def create(name: String): Team = {
@@ -31,6 +31,7 @@ case object TeamManager {
       val insertable = MongoDBObject("id" -> nextId, "name" -> name, "members" -> 0)
       coll.insert(insertable)
       // TODO validate correct db write
+
       Team(nextId, name, 0)
     }
     team

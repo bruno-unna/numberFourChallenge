@@ -1,43 +1,19 @@
-package com.numberfour
+package com.numberfour.application
 
-import com.numberfour.domain.SubTeam
-import com.numberfour.domain.Team
-import akka.actor.Actor
 import spray.http.MediaTypes._
 import spray.json.pimpAny
 import spray.routing.Directive.pimpApply
 import spray.routing.HttpService
 import spray.routing.directives.CompletionMagnet.fromObject
-import com.numberfour.domain.Team
 import java.util.NoSuchElementException
 import spray.http.StatusCodes
 import spray.json._
 import DefaultJsonProtocol._
 import spray.httpx.SprayJsonSupport._
 import spray.routing.directives.LoggingMagnet
-import com.numberfour.domain.TeamManager
-import grizzled.slf4j.Logger
+import com.numberfour.domain._
 
-// we don't implement our route structure directly in the service actor because
-// we want to be able to test it independently, without having to spin up an actor
-
-class AgileServiceActor extends Actor with AgileService {
-
-  // the HttpService trait defines only one abstract member, which
-  // connects the services environment to the enclosing actor or test
-  def actorRefFactory = context
-
-  // this actor only runs our route, but you could add
-  // other things here, like request stream processing
-  // or timeout handling
-  def receive = runRoute(route)
-
-}
-
-// this trait defines our service behavior independently from the service actor
-
-trait AgileService extends HttpService {
-  val log = Logger.rootLogger
+trait TeamService extends HttpService {
 
   // some marshalling will be needed:
 
@@ -47,8 +23,7 @@ trait AgileService extends HttpService {
   }
   import IncomingTeamJsonProtocol._
 
-  val route = {
-    log.info("entering the route")
+  val teamRoute =
     path("") { // direct access to the app context is forbidden
       respondWithStatus(StatusCodes.BadRequest) {
         complete {
@@ -56,7 +31,6 @@ trait AgileService extends HttpService {
         }
       }
     } ~ path("api" / "teams" / IntNumber) { id =>
-      log.info("recognizing /api/teams/" + id)
       get {
         respondWithMediaType(`application/json`) {
           val team_ = TeamManager.findById(id)
@@ -93,5 +67,5 @@ trait AgileService extends HttpService {
         }
       }
     }
-  }
+
 }

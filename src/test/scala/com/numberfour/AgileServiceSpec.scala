@@ -16,6 +16,7 @@ import spray.json._
 import DefaultJsonProtocol._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
+import com.numberfour.application.AgileService
 
 @RunWith(classOf[JUnitRunner])
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
