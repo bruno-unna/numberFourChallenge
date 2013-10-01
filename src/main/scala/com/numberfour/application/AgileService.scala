@@ -42,4 +42,5 @@ trait AgileService extends HttpService with TeamService with ProjectService {
   val route = {
     teamRoute ~ projectRoute
   }
+
 }

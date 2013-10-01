@@ -31,7 +31,7 @@ trait ProjectService extends HttpService {
 
           if (project_.isEmpty) {
             respondWithStatus(StatusCodes.NotFound) {
-              complete { "TEAM NOT FOUND" }
+              complete { "the requested team was not found, check your query" }
             }
           } else {
             val project = project_.get
@@ -53,9 +53,7 @@ trait ProjectService extends HttpService {
           val jsonProject = project.toJson
           respondWithMediaType(`application/json`) {
             respondWithStatus(StatusCodes.Created) {
-              complete {
-                jsonProject.compactPrint
-              }
+              complete { jsonProject.compactPrint }
             }
           }
         }
