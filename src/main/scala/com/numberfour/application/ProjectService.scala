@@ -18,7 +18,7 @@ trait ProjectService extends HttpService {
   // some marshalling will be needed:
 
   object IncomingProjectJsonProtocol extends DefaultJsonProtocol {
-    implicit val subprojectFormat = jsonFormat4(SubProject)
+    implicit val subprojectFormat = jsonFormat3(SubProject)
     implicit val projectFormat = jsonFormat8(Project)
   }
   import IncomingProjectJsonProtocol._

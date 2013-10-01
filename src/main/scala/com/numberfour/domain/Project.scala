@@ -11,7 +11,7 @@ case class Project(id: Int, name: String, description: String, teamId: Int,
   githubUrl: String, gitUrl: String, githubWatchers: Int, githubForks: Int)
 
 // only needed when receiving a request with a json-represented project (not all fields are supplied):
-case class SubProject(id: Int, name: String, description: String, teamId: Int)
+case class SubProject(name: String, description: String, teamId: Int)
 
 case object ProjectManager {
 
