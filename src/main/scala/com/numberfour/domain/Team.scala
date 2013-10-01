@@ -3,14 +3,14 @@ package com.numberfour.domain
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
-import com.numberfour.infrastructure.Autoincremental
+import com.numberfour.infrastructure.MongoDB
 
 case class Team(id: Int, name: String, members: Int)
 
 // only needed when receiving a request with a json-represented team (not all fields are supplied):
 case class SubTeam(name: String)
 
-case object TeamManager extends Autoincremental {
+case object TeamManager extends MongoDB {
 
   val teamCollection = db("team")
 

@@ -6,7 +6,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.typesafe.config.ConfigFactory
 import com.numberfour.Configurable
 
-trait Autoincremental extends Configurable {
+trait MongoDB extends Configurable {
 
   val mongoHost = config.getString("numberfour.mongodb.host")
   val mongoPort = config.getInt("numberfour.mongodb.port")

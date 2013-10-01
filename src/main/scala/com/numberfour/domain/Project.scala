@@ -6,7 +6,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 import org.eclipse.egit.github.core._
 import org.eclipse.egit.github.core.client._
 import org.eclipse.egit.github.core.service._
-import com.numberfour.infrastructure.Autoincremental
+import com.numberfour.infrastructure.MongoDB
 import com.numberfour.infrastructure.Github
 import scala.collection.JavaConversions._
 import com.numberfour.Configurable
@@ -17,7 +17,7 @@ case class Project(id: Int, name: String, description: String, teamId: Int,
 // only needed when receiving a request with a json-represented project (not all fields are supplied):
 case class SubProject(name: String, description: String, teamId: Int)
 
-case object ProjectManager extends Autoincremental with Github with Configurable {
+case object ProjectManager extends MongoDB with Github with Configurable {
 
   val projectCollection = db("project")
 
