@@ -8,6 +8,7 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
 resolvers ++= Seq(
   "nightlies spray repo" at "http://nightlies.spray.io/",
+  "spray repository" at "http://repo.spray.io/",
   "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
   "releases"  at "http://oss.sonatype.org/content/repositories/releases",
   "apache maven repo" at "http://repo.maven.apache.org/maven2"
