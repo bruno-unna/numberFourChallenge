@@ -20,6 +20,7 @@ import com.numberfour.application.AgileService
 
 @RunWith(classOf[JUnitRunner])
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
+
   def actorRefFactory = system
 
   // in order to prepare the messages' payload, we are going to need a set of marshallers:  
@@ -44,14 +45,10 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
     }
   }
 
-//  // let's prepare the tests fixture (db cleaning, github cleaning)
-  val mongoClient = MongoClient("localhost", 27017)
-  val db = mongoClient("numberfour")
-  val coll = db("team")
-  val deleteAllTeams = MongoDBObject()
-  coll.remove(deleteAllTeams)
+  var givenId: Int = 0
 
   // now, the proper specification of the agile management service:
+  sequential
   "AgileService" should {
 
     "reject direct GET requests to the root path" in {
@@ -70,6 +67,7 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
       Post("/api/teams", Team(0, "First Team", 0)) ~> addHeader("Content-Type", "application/json") ~> route ~> check {
         status === Created
         val t = entityAs[Team]
+        givenId = t.id
         t.name === "First Team"
         t.members === 0
       }
@@ -81,15 +79,15 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
       }
     }
 
-    // TODO find out why this test fails
     "reading a correct Team should deliver a correct Team" in {
-      Get("/api/teams/1") ~> route ~> check {
+      Get("/api/teams/" + givenId) ~> route ~> check {
         status === OK
         val t = entityAs[Team]
+        t.id === givenId
         t.name === "First Team"
         t.members === 0
       }
     }
-    
+
   }
 }
