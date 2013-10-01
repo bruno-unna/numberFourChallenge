@@ -76,14 +76,14 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
     }
 
     "reading a team via GET with the wrong id should fail" in {
-      Get("api/teams/-1") ~> sealRoute(route) ~> check {
+      Get("/api/teams/-1") ~> sealRoute(route) ~> check {
         status === NotFound
       }
     }
 
     // TODO find out why this test fails
     "reading a correct Team should deliver a correct Team" in {
-      Get("api/teams/1") ~> route ~> check {
+      Get("/api/teams/1") ~> route ~> check {
         status === OK
         val t = entityAs[Team]
         t.name === "First Team"
