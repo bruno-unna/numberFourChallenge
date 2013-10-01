@@ -18,6 +18,9 @@ import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 import com.numberfour.application.AgileService
 import com.numberfour.domain.Project
+import com.numberfour.domain.ProjectManager
+import com.numberfour.domain.TeamManager
+import java.util.UUID
 
 @RunWith(classOf[JUnitRunner])
 class AgileServiceSpec extends Specification with Specs2RouteTest with AgileService {
@@ -87,12 +90,14 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
       }
     }
 
+    val teamName = UUID.randomUUID().toString()
+
     "adding a team via POST should return the team with a 201 header" in {
-      Post("/api/teams", Team(0, "First Team", 0)) ~> addHeader("Content-Type", "application/json") ~> route ~> check {
+      Post("/api/teams", Team(0, teamName, 0)) ~> addHeader("Content-Type", "application/json") ~> route ~> check {
         status === Created
         val t = entityAs[Team]
         givenId = t.id // in preparation for the get occurring later on
-        t.name === "First Team"
+        t.name === teamName
         t.members === 0
       }
     }
@@ -108,20 +113,22 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
         status === OK
         val t = entityAs[Team]
         t.id === givenId
-        t.name === "First Team"
+        t.name === teamName
         t.members === 0
       }
     }
 
+    val projectName = UUID.randomUUID().toString()
+
     "adding a project via POST should return the project with a 201 header" in {
-      Post("/api/projects", Project(0, "Yet Another To-Do App", "What the world needed", 1, "", "", 0, 0)) ~>
+      Post("/api/projects", Project(0, projectName, "What the world needed", 1, "", "", 0, 0)) ~>
         addHeader("Content-Type", "application/json") ~> route ~> check {
           status === Created
           val p = entityAs[Project]
           givenId = p.id // once again, in preparation for the get occurring later on
-          p.name === "Yet Another To-Do App"
+          p.name === projectName
           p.description === "What the world needed"
-          p.teamId === 0
+          p.teamId === 1
         }
     }
 
@@ -136,9 +143,9 @@ class AgileServiceSpec extends Specification with Specs2RouteTest with AgileServ
         status === OK
         val p = entityAs[Project]
         p.id === givenId
-        p.name === "Yet Another To-Do App"
-        p.description === "What the world brauches"
-        p.teamId === 0
+        p.name === projectName
+        p.description === "What the world needed"
+        p.teamId === 1
       }
     }
 

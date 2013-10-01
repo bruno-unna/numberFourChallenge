@@ -70,4 +70,5 @@ case object ProjectManager extends Autoincremental with Github with Configurable
       Some(Project(id, name, description, teamId, gitHtmlUrl, gitUrl, gitWatchers, gitForks))
     }
   }
+
 }
