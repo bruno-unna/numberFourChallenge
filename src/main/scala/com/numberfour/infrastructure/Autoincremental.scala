@@ -3,11 +3,17 @@ package com.numberfour.infrastructure
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
+import com.typesafe.config.ConfigFactory
+import com.numberfour.Configurable
 
-trait Autoincremental {
+trait Autoincremental extends Configurable {
 
-  val mongoClient = MongoClient("localhost", 27017)
-  val db = mongoClient("numberfour")
+  val mongoHost = config.getString("numberfour.mongodb.host")
+  val mongoPort = config.getInt("numberfour.mongodb.port")
+  val mongoDB = config.getString("numberfour.mongodb.db-name")
+
+  val mongoClient = MongoClient(mongoHost, mongoPort)
+  val db = mongoClient(mongoDB)
 
   def calcNextId(collection: String): Int = {
     val counterCollection = db("counters")
