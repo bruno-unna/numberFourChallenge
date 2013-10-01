@@ -11,3 +11,4 @@ test-output/
 .project
 **/.cache
 /bin
+**/.DS_Store
